@@ -1,0 +1,116 @@
+// RUBIK ROTATION
+global proc RubikRotation(string $face, int $cw)
+{
+    currentTime `python("numberOfRotation(rubikRotation) * 6")`;
+    int $curFrame = `currentTime -q`; // get the position of current frame
+
+    float $cubePivot[] = `xform -q -piv -ws _222`; // get the center pivot of the Rubik
+    string $sel[];
+    int $clockwise = $cw; // clockwise(1) or anticlockwise(0)
+    int $i; // iterator, to scan all selected cubes
+    string $grp; // temporary group name
+    
+    switch ($face)
+    {
+    case "white":
+        $sel = python("selection(\"white\")");
+        for($i = 0; $i < size($sel); $i++) // scan all the selected cubes
+        {
+            // DO GROUP
+            // $grp = python("doGrp(\"" + $sel[$i] + "\")");
+            $grp = doGrp($sel[$i]);
+            // clear all selections
+            select -cl;
+            // MOVE GROUP PIVOT
+            mvGrpPiv($grp, $cubePivot);
+            // python("mvGrpPiv(\"" + $grp + "," + $cubePivot + ")");
+            // SET KEY FRAME
+            setKeyFrm($grp, $curFrame, 0, (pow(-1, $clockwise)*90), 0);
+        }
+        // MOVE TIMELINE POINTER
+        $curFrame = mvTimelinePointer($curFrame);
+        
+        // run Python side rotation
+        python("rubik = rotateFace(rubik, face = \"" + $face + "\", cw = " + $clockwise + ")");
+        //python("displayRubik(rubik)"); // dispaly current state of the Rubiks
+        break;
+    case "orange":
+        $sel = python("selection(\"orange\")");
+        for($i = 0; $i < size($sel); $i++)
+        {
+            $grp = doGrp($sel[$i]);
+            //$grp = python("doGrp(\"" + $sel[$i] + "\")");
+            select -cl;
+            mvGrpPiv($grp, $cubePivot);
+            //python("mvGrpPiv(\"" + $grp + "," + $cubePivot + ")");
+            setKeyFrm($grp, $curFrame, (pow(-1, $clockwise)*-90), 0, 0);
+        }
+        $curFrame = mvTimelinePointer($curFrame);
+        python("rubik = rotateFace(rubik, face = \"" + $face + "\", cw = " + $clockwise + ")");
+        //python("displayRubik(rubik)");
+        break;
+    case "blue":
+        $sel = python("selection(\"blue\")");
+        for($i = 0; $i < size($sel); $i++)
+        {
+            $grp = doGrp($sel[$i]);
+            //$grp = python("doGrp(\"" + $sel[$i] + "\")");
+            select -cl;
+            mvGrpPiv($grp, $cubePivot);
+            //python("mvGrpPiv(\"" + $grp + "," + $cubePivot + ")");
+            setKeyFrm($grp, $curFrame, 0, 0, (pow(-1, $clockwise)*90));
+        }
+        $curFrame = mvTimelinePointer($curFrame);
+        python("rubik = rotateFace(rubik, face = \"" + $face + "\", cw = " + $clockwise + ")");
+        //python("displayRubik(rubik)");
+        break;
+    case "red":
+        $sel = python("selection(\"red\")");
+        for($i = 0; $i < size($sel); $i++)
+        {
+            $grp = doGrp($sel[$i]);
+            //$grp = python("doGrp(\"" + $sel[$i] + "\")");
+            select -cl;
+            mvGrpPiv($grp, $cubePivot);
+            //python("mvGrpPiv(\"" + $grp + "," + $cubePivot + ")");
+            setKeyFrm($grp, $curFrame, (pow(-1, $clockwise)*90), 0, 0);
+        }
+        $curFrame = mvTimelinePointer($curFrame);
+        python("rubik = rotateFace(rubik, face = \"" + $face + "\", cw = " + $clockwise + ")");
+        //python("displayRubik(rubik)");
+        break;
+    case "green":
+        $sel = python("selection(\"green\")");
+        for($i = 0; $i < size($sel); $i++)
+        {
+            $grp = doGrp($sel[$i]);
+            //$grp = python("doGrp(\"" + $sel[$i] + "\")");
+            select -cl;
+            mvGrpPiv($grp, $cubePivot);
+            //python("mvGrpPiv(\"" + $grp + "," + $cubePivot + ")");
+            setKeyFrm($grp, $curFrame, 0, 0, (pow(-1, $clockwise)*-90));
+        }
+        $curFrame = mvTimelinePointer($curFrame);
+        python("rubik = rotateFace(rubik, face = \"" + $face + "\", cw = " + $clockwise + ")");
+        //python("displayRubik(rubik)");
+        break;
+    case "yellow":
+        $sel = python("selection(\"yellow\")");
+        for($i = 0; $i < size($sel); $i++)
+        {
+            $grp = doGrp($sel[$i]);
+            //$grp = python("doGrp(\"" + $sel[$i] + "\")");
+            select -cl;
+            mvGrpPiv($grp, $cubePivot);
+            //python("mvGrpPiv(\"" + $grp + "\"," + $cubePivot + ")");
+            setKeyFrm($grp, $curFrame, 0, (pow(-1, $clockwise)*90), 0);
+        }
+        $curFrame = mvTimelinePointer($curFrame);
+        python("rubik = rotateFace(rubik, face = \"" + $face + "\", cw = " + $clockwise + ")");
+        //python("displayRubik(rubik)");
+        break;
+    default:
+        break;
+    }
+    
+}

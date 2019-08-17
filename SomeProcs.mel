@@ -1,0 +1,75 @@
+// RESET RUBIKS CUBE STATE
+global proc resetAll(string $grp, int $jobNumber)
+{
+    scriptJob -kill $jobNumber -force;
+    currentTime 0; // reset current time to 0 frame
+    string $rootGrp = $grp; // get the root group name
+    int $i, $j, $k;
+    for($i = 1; $i <= 3; $i++)
+    {
+        for($j = 1; $j <= 3; $j++)
+        {
+            for($k = 1; $k <= 3; $k++)
+            {
+                // -r(-relative) to preserve the original transformations
+                parent -r (`parent -r -w ("_" + $i + $j + $k)`) $rootGrp; // parent to the world, then move under root group
+            }
+        }
+    }
+    delete ($rootGrp + "|group*"); // delete all groups under root group
+    select -cl; // deselect all
+    playbackOptions -animationStartTime 0  -minTime 0 -maxTime 6 -animationEndTime 6;
+    //currentTime 0;
+    python("rubik = initializeRubik()");
+    python("rubikRotation = initializeRotation()");
+}
+
+
+// DO GROUP
+global proc string doGrp(string $cube)
+{
+    // get the full path of each cube
+    string $fullpath[] = `listRelatives -fullPath $cube`;
+    // get the top level group of the selected cube, except the root group which is Rubik
+    string $topGroup = `match "[^|Rubiks|][^|]*" $fullpath[0]`;
+    // set a new group for the selected group, and return the new group name
+    return `group $topGroup`;
+}
+
+
+// MOVE GROUP PIVOT
+global proc mvGrpPiv(string $grpName, float $cubePiv[])
+{
+    // get the coordinate of the group
+    $grpPivot = `xform -q -piv -ws $grpName`; 
+    // move the new group pivot to the center pivot of the Rubik
+    move -r ($cubePiv[0]-$grpPivot[0]) ($cubePiv[1]-$grpPivot[1]) ($cubePiv[2]-$grpPivot[2]) ($grpName+".scalePivot") ($grpName+".rotatePivot");
+}
+
+
+// SET KEY FRAME
+global proc setKeyFrm(string $grpName, int $currentFrm, float $x, float $y, float $z)
+{
+    // set key frame on the rotate of the new group
+    setKeyframe -at "rotateX" -at "rotateY" -at "rotateZ" -t $currentFrm $grpName;
+    // rotate the new group
+    rotate -r $x $y $z $grpName;
+    // set key frame on the rotate of the new group after 6 frames
+    setKeyframe -at "rotateX" -at "rotateY" -at "rotateZ" -t ($currentFrm + 6) $grpName;
+}
+
+
+// MOVE TIMELINE POINTER
+global proc int mvTimelinePointer(int $currentFrm)
+{
+    // set the current frame to the state after rotation
+    $currentFrm += 6;
+    
+    playbackOptions -animationStartTime 0  -minTime 0 -maxTime $currentFrm -animationEndTime $currentFrm;
+    // playButtonForward;
+    play -forward true;
+    // move the current frame to after rotation
+    //currentTime $currentFrm;
+    
+    return $currentFrm;
+}

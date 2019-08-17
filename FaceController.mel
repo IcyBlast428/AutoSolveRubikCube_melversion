@@ -1,0 +1,71 @@
+global proc FaceController()
+{
+    string $sel[] = `ls -sl`;
+    string $color = `match "^[^_]+" $sel[0]`;
+    string $direction = `match "[^_]+$" $sel[0]`;
+    switch($color)
+    {
+    case "blue":
+        if ($direction == "clockwise")
+        {
+            RubikRotation("blue", 1);
+        }
+        else
+        {
+            RubikRotation("blue", 0);
+        }
+        break;
+    case "orange":
+        if ($direction == "clockwise")
+        {
+            RubikRotation("orange", 1);
+        }
+        else
+        {
+            RubikRotation("orange", 0);
+        }
+        break;
+    case "green":
+        if ($direction == "clockwise")
+        {
+            RubikRotation("green", 1);
+        }
+        else
+        {
+            RubikRotation("green", 0);
+        }
+        break;
+    case "red":
+        if ($direction == "clockwise")
+        {
+            RubikRotation("red", 1);
+        }
+        else
+        {
+            RubikRotation("red", 0);
+        }
+        break;
+    case "yellow":
+        if ($direction == "clockwise")
+        {
+            RubikRotation("yellow", 1);
+        }
+        else
+        {
+            RubikRotation("yellow", 0);
+        }
+        break;
+    case "white":
+        if ($direction == "clockwise")
+        {
+            RubikRotation("white", 1);
+        }
+        else
+        {
+            RubikRotation("white", 0);
+        }
+        break;
+    default:
+        break;
+    }
+}

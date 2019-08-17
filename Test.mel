@@ -1,0 +1,9 @@
+int $jobNum = `scriptJob -ct "SomethingSelected" "FaceController"`;
+
+// reset all
+resetAll("Rubiks", $jobNum);
+
+
+scriptJob -listJobs;
+
+scriptJob -kill 197;
